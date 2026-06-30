@@ -8,18 +8,19 @@ import random
 import string
 
 class TestCourierCreate:
-    def test_create_courier(self):
+    def test_create_courier(self, delete_courier):
         payload = {
             "login": ''.join(random.choice(string.ascii_lowercase) for i in range(10)),
             "password": ''.join(random.choice(string.ascii_lowercase) for i in range(10)),
             "firstName": ''.join(random.choice(string.ascii_lowercase) for i in range(10))
         }
         response = requests.post(URL + '/api/v1/courier', json=payload)
+        delete_courier(payload['login'], payload['password'])
         
         assert response.status_code == 201
         assert response.json()['ok'] == True
 
-    def test_create_duplicate_courier(self):
+    def test_create_duplicate_courier(self, delete_courier):
         login_pass = register_new_courier_and_return_login_password()
         payload = {
             "login": login_pass[0],
@@ -28,7 +29,8 @@ class TestCourierCreate:
         }
         requests.post(URL + '/api/v1/courier', json=payload)
         response = requests.post(URL + '/api/v1/courier', json=payload)
-    
+        delete_courier(payload['login'], payload['password'])
+
         assert response.status_code == 409
 
     @pytest.mark.parametrize('payload', [no_login, no_password])

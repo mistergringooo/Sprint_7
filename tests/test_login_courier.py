@@ -4,8 +4,6 @@ from urls import URL
 from registration_courier import register_new_courier_and_return_login_password
 from data import no_login
 from data import no_password
-import random
-import string
 
 class TestCourierLogin:
     def test_courier_login(self, courier):
